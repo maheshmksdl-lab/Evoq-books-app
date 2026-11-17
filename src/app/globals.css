@@ -1,0 +1,156 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-depth: var(--t-depth);
+  --color-action: var(--t-action);
+  --color-hover: var(--t-hover);
+  --color-soft: var(--t-soft);
+  --color-tint: var(--t-tint);
+  --color-surface: var(--t-surface);
+  --color-subtle: var(--n-subtle);
+  --color-success: var(--s-success);
+  --color-warning: var(--s-warning);
+  --color-error: var(--s-error);
+  --color-neutral: var(--s-neutral);
+}
+
+/* ---------- Shared EVOQ neutrals (identical across themes) ---------- */
+:root {
+  --n-white: #ffffff;
+  --n-bg: #f8fafc;
+  --n-border: #e6eaf0;
+  --n-text: #1f2430;
+  --n-muted: #5f6b7a;
+  --n-subtle: #9ba8b7;
+  /* Semantic colours — independent of the product theme */
+  --s-success: #10b981;
+  --s-warning: #f59e0b;
+  --s-error: #ef4444;
+  --s-neutral: #6b7280;
+  --radius: 0.5rem;
+}
+
+/* ---------- Product themes: Depth / Primary / Action / Hover / Soft / Tint / Surface ---------- */
+:root,
+[data-theme="aubergine"] {
+  --t-depth: #35243f; --t-primary: #654477; --t-action: #84609a; --t-hover: #533665;
+  --t-soft: #c1a8d0; --t-tint: #ede3f1; --t-surface: #f8f4fa;
+}
+[data-theme="graphite"] {
+  --t-depth: #252d28; --t-primary: #4d7c0f; --t-action: #65a30d; --t-hover: #3f660d;
+  --t-soft: #b4d77c; --t-tint: #eaf4d5; --t-surface: #f6f9ef;
+}
+[data-theme="copper"] {
+  --t-depth: #482b25; --t-primary: #96543b; --t-action: #bb704b; --t-hover: #78432f;
+  --t-soft: #d9a88d; --t-tint: #f2e3d9; --t-surface: #faf5f1;
+}
+[data-theme="petrol"] {
+  --t-depth: #153b3a; --t-primary: #176b65; --t-action: #26958a; --t-hover: #125750;
+  --t-soft: #8bcbc0; --t-tint: #d9eeea; --t-surface: #f1f8f6;
+}
+
+/* ---------- shadcn token mapping (all colour comes from theme + neutral tokens) ---------- */
+:root {
+  --background: var(--n-bg);
+  --foreground: var(--n-text);
+  --card: var(--n-white);
+  --card-foreground: var(--n-text);
+  --popover: var(--n-white);
+  --popover-foreground: var(--n-text);
+  --primary: var(--t-primary);
+  --primary-foreground: #ffffff;
+  --secondary: var(--t-surface);
+  --secondary-foreground: var(--t-hover);
+  --muted: #f1f4f8;
+  --muted-foreground: var(--n-muted);
+  --accent: var(--t-tint);
+  --accent-foreground: var(--t-depth);
+  --destructive: var(--s-error);
+  --border: var(--n-border);
+  --input: #d9dfe8;
+  --ring: var(--t-action);
+  --chart-1: var(--t-action);
+  --chart-2: var(--t-soft);
+  --chart-3: var(--t-depth);
+  --chart-4: var(--n-subtle);
+  --chart-5: var(--t-primary);
+  --sidebar: var(--t-depth);
+  --sidebar-foreground: #e9e4ee;
+  --sidebar-primary: var(--t-action);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: color-mix(in srgb, #ffffff 11%, var(--t-depth));
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: color-mix(in srgb, #ffffff 12%, var(--t-depth));
+  --sidebar-ring: var(--t-soft);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { @apply font-sans; font-size: 15px; }
+  body { @apply bg-background text-foreground antialiased; }
+  ::selection { background: var(--t-soft); color: var(--t-depth); }
+}
+
+/* Tabular numerals for money */
+.num { font-variant-numeric: tabular-nums; text-align: right; }
+.tnum { font-variant-numeric: tabular-nums; }
+.scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: var(--n-border); border-radius: 8px; }
+
+/* Print-friendly reports */
+@media print {
+  .no-print, [data-sidebar-root], [data-topbar] { display: none !important; }
+  body { background: #fff !important; }
+  main { padding: 0 !important; overflow: visible !important; }
+  .print-area { box-shadow: none !important; border: none !important; }
+}
+
+/* Semantic status tones — independent of the selected product theme */
+.tone-success { background: color-mix(in srgb, var(--s-success) 12%, white); color: color-mix(in srgb, var(--s-success) 62%, black); border-color: color-mix(in srgb, var(--s-success) 32%, white); }
+.tone-warning { background: color-mix(in srgb, var(--s-warning) 14%, white); color: color-mix(in srgb, var(--s-warning) 58%, black); border-color: color-mix(in srgb, var(--s-warning) 38%, white); }
+.tone-error { background: color-mix(in srgb, var(--s-error) 10%, white); color: color-mix(in srgb, var(--s-error) 78%, black); border-color: color-mix(in srgb, var(--s-error) 30%, white); }
+.tone-neutral { background: color-mix(in srgb, var(--s-neutral) 10%, white); color: color-mix(in srgb, var(--s-neutral) 85%, black); border-color: color-mix(in srgb, var(--s-neutral) 25%, white); }
+.tone-info { background: var(--t-tint); color: var(--t-hover); border-color: color-mix(in srgb, var(--t-soft) 60%, white); }
