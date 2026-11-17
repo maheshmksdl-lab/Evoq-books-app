@@ -8,7 +8,9 @@ export default function ReportPage() {
   const { slug } = useParams<{ slug: string }>();
   switch (slug) {
     case "pnl": return <PnlView />;
+    case "pnl-schedule-iii": return <PnlView scheduleIii />;
     case "balance-sheet": return <BalanceSheetView />;
+    case "balance-sheet-schedule-iii": return <BalanceSheetView scheduleIii />;
     case "cash-flow": return <CashFlowView />;
     case "trial-balance": return <TrialBalanceView />;
     case "general-ledger": return <GeneralLedgerPage />;
@@ -19,6 +21,6 @@ export default function ReportPage() {
     case "ar-ageing": return <AgeingView kind="ar" />;
     case "ap-ageing": return <AgeingView kind="ap" />;
     case "tax-summary": return <TaxSummaryView />;
-    default: return <EmptyState title="Report not found" description={`No report named “${slug}”.`} />;
+    default: return <EmptyState title="Report not found" description={`No report named "${slug}".`} />;
   }
 }

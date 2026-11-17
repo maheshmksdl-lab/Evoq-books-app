@@ -23,7 +23,7 @@ import { formatDate, titleCase } from "@/lib/formatters";
 const useCollapsed = () => { const [c, setC] = React.useState<Set<string>>(new Set()); return { collapsed: c, toggle: (k: string) => setC((s) => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n; }), set: setC }; };
 
 // -------------------------------------------------------------------------------- Profit & Loss
-export function PnlView() {
+export function PnlView({ scheduleIii }: { scheduleIii?: boolean } = {}) {
   const p = useUrlParams(); const { filters, state, set } = useReportFilters({ from: p?.get("from"), to: p?.get("to") });
   const { basis } = useApp(); const { data, isLoading, error, refetch } = usePnl({ from: filters.from, to: filters.to, basis, ...(filters.compare ? { compareFrom: filters.compareFrom, compareTo: filters.compareTo } : {}) });
   const c = useCollapsed(); const [hideZero] = [true];
@@ -33,17 +33,27 @@ export function PnlView() {
   if (cur) {
     const add = (n: ReportNode | null, pn: ReportNode | null) => rows.push(...nodesToRows(n, pn, c.collapsed));
     const sub = (key: string, label: string, a: number, b: number | undefined, kind: RRow["kind"] = "subtotal") => rows.push({ key, label, depth: 0, amount: a, prev: b, kind });
-    add(cur.revenue, prev?.revenue ?? null); add(cur.cogs, prev?.cogs ?? null); sub("gp", "Gross profit", cur.grossProfit, prev?.grossProfit);
-    add(cur.opex, prev?.opex ?? null); sub("ebitda", "Operating profit (before depreciation)", cur.ebitda, prev?.ebitda); add(cur.depreciation, prev?.depreciation ?? null); add(cur.otherIncome, prev?.otherIncome ?? null); add(cur.finance, prev?.finance ?? null);
-    sub("net", "Net profit / (loss)", cur.netProfit, prev?.netProfit, "total");
+    if (scheduleIii) {
+      add(cur.revenue, prev?.revenue ?? null); sub("trev", "Total revenue", cur.totalRevenue, prev?.totalRevenue); add(cur.cogs, prev?.cogs ?? null); sub("gp", "Gross profit", cur.grossProfit, prev?.grossProfit);
+      add(cur.opex, prev?.opex ?? null); sub("op", "Operating profit", cur.ebitda, prev?.ebitda); add(cur.depreciation, prev?.depreciation ?? null); sub("profit_before", "Profit before depreciation", cur.ebitda, prev?.ebitda);
+      add(cur.finance, prev?.finance ?? null); add(cur.otherIncome, prev?.otherIncome ?? null);
+      sub("net", "Profit after tax", cur.netProfit, prev?.netProfit, "total");
+    } else {
+      add(cur.revenue, prev?.revenue ?? null); add(cur.cogs, prev?.cogs ?? null); sub("gp", "Gross profit", cur.grossProfit, prev?.grossProfit);
+      add(cur.opex, prev?.opex ?? null); sub("ebitda", "Operating profit (before depreciation)", cur.ebitda, prev?.ebitda); add(cur.depreciation, prev?.depreciation ?? null); add(cur.otherIncome, prev?.otherIncome ?? null); add(cur.finance, prev?.finance ?? null);
+      sub("net", "Net profit / (loss)", cur.netProfit, prev?.netProfit, "total");
+    }
   }
   const all = cur ? [cur.revenue, cur.cogs, cur.opex, cur.depreciation, cur.otherIncome, cur.finance].flatMap(groupIds) : [];
   void hideZero;
+  const title = scheduleIii ? "Profit and Loss (Schedule III)" : "Profit and Loss";
+  const exportName = scheduleIii ? "profit-and-loss-schedule-iii" : "profit-and-loss";
   return (
-    <ReportFrame title="Profit and Loss" subtitle={`${periodLabel(filters.from, filters.to)} · ${basis === "cash" ? "Cash basis" : "Accrual basis"}`} exportName="profit-and-loss" getRows={() => [["Account", "Amount", ...(filters.compare ? ["Previous"] : [])], ...rows.map((r) => [r.label, r.amount, ...(filters.compare ? [r.prev ?? ""] : [])])]}
+    <ReportFrame title={title} subtitle={`${periodLabel(filters.from, filters.to)} · ${basis === "cash" ? "Cash basis" : "Accrual basis"}`} exportName={exportName} getRows={() => [["Account", "Amount", ...(filters.compare ? ["Previous"] : [])], ...rows.map((r) => [r.label, r.amount, ...(filters.compare ? [r.prev ?? ""] : [])])]}
       actions={cur && <span className="hidden text-xs text-muted-foreground sm:inline">Net margin {cur.totalRevenue ? ((cur.netProfit / cur.totalRevenue) * 100).toFixed(1) : 0}%</span>}>
       <div className="no-print flex flex-wrap items-end gap-3 p-3 pb-0"><div><p className="mb-1 text-[11px] font-medium text-muted-foreground">Report basis</p><BasisToggle /></div><div className="min-w-0 flex-1"><FilterBar state={state} set={set} /></div></div>
       {basis === "cash" && <div className="px-3"><BasisNote /></div>}
+      {scheduleIii && <div className="px-3 pt-2"><p className="tone-info rounded-md border px-3 py-2 text-xs"><b>Schedule III format.</b> This is the statutory profit and loss statement format for Indian companies under the Companies Act.</p></div>}
       <ExpandControls onExpand={() => c.set(new Set())} onCollapse={() => c.set(new Set(all))} />
       {isLoading || !cur ? <TableSkeleton /> : <ReportTable rows={rows} compare={filters.compare} collapsed={c.collapsed} onToggle={c.toggle} from={filters.from} to={filters.to} percentOfFirst={cur.totalRevenue} labels={[periodLabel(filters.from, filters.to), periodLabel(filters.compareFrom, filters.compareTo)]} />}
     </ReportFrame>
@@ -51,9 +61,9 @@ export function PnlView() {
 }
 
 // -------------------------------------------------------------------------------- Balance sheet
-export function BalanceSheetView() {
+export function BalanceSheetView({ scheduleIii }: { scheduleIii?: boolean } = {}) {
   const p = useUrlParams(); const { filters, state, set } = useReportFilters({ to: p?.get("to"), from: p?.get("to") });
-  const { data, isLoading, error, refetch } = useBalanceSheet({ asOf: filters.asOf, ...(filters.compare ? { compareAsOf: filters.compareTo } : {}) });
+  const { basis } = useApp(); const { data, isLoading, error, refetch } = useBalanceSheet({ asOf: filters.asOf, basis, ...(filters.compare ? { compareAsOf: filters.compareTo } : {}) });
   const c = useCollapsed(); const f = useFormat();
   if (error) return <ErrorState error={error as Error} onRetry={() => refetch()} />;
   const cur = data?.current, prev = data?.previous ?? null; const rows: RRow[] = [];
@@ -62,9 +72,13 @@ export function BalanceSheetView() {
     rows.push(...nodesToRows(cur.assets, prev?.assets ?? null, c.collapsed), tot("ta", "Total assets", cur.totalAssets, prev?.totalAssets), ...nodesToRows(cur.liabilities, prev?.liabilities ?? null, c.collapsed), ...nodesToRows(cur.equity, prev?.equity ?? null, c.collapsed), tot("tle", "Total liabilities & equity", cur.totalLiabilities + cur.totalEquity, prev ? prev.totalLiabilities + prev.totalEquity : undefined));
   }
   const all = cur ? [cur.assets, cur.liabilities, cur.equity].flatMap(groupIds) : [];
+  const title = scheduleIii ? "Balance Sheet (Schedule III)" : "Balance Sheet";
+  const exportName = scheduleIii ? "balance-sheet-schedule-iii" : "balance-sheet";
   return (
-    <ReportFrame title="Balance Sheet" subtitle={`As of ${formatDate(filters.asOf)}`} exportName="balance-sheet" getRows={() => [["Account", "Amount"], ...rows.map((r) => [r.label, r.amount])]}>
-      <div className="no-print p-3 pb-0"><FilterBar state={state} set={set} mode="asof" /></div>
+    <ReportFrame title={title} subtitle={`As of ${formatDate(filters.asOf)} · ${basis === "cash" ? "Cash basis" : "Accrual basis"}`} exportName={exportName} getRows={() => [["Account", "Amount"], ...rows.map((r) => [r.label, r.amount])]}>
+      <div className="no-print flex flex-wrap items-end gap-3 p-3 pb-0"><div><p className="mb-1 text-[11px] font-medium text-muted-foreground">Report basis</p><BasisToggle /></div><div className="min-w-0 flex-1"><FilterBar state={state} set={set} mode="asof" /></div></div>
+      {basis === "cash" && <div className="px-3"><BasisNote /></div>}
+      {scheduleIii && <div className="px-3 pt-2"><p className="tone-info rounded-md border px-3 py-2 text-xs"><b>Schedule III format.</b> This is the statutory balance sheet format for Indian companies under the Companies Act.</p></div>}
       <ExpandControls onExpand={() => c.set(new Set())} onCollapse={() => c.set(new Set(all))} />
       {isLoading || !cur ? <TableSkeleton /> : <>
         <ReportTable rows={rows} compare={filters.compare} collapsed={c.collapsed} onToggle={c.toggle} labels={[formatDate(filters.asOf), formatDate(filters.compareTo)]} />

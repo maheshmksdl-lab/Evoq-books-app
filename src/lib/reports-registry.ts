@@ -4,7 +4,9 @@ export interface ReportDef { slug: string; title: string; description: string; c
 
 export const REPORTS: ReportDef[] = [
   { slug: "pnl", title: "Profit and Loss", description: "Income, cost of goods sold, expenses and net profit with comparative periods and drill-down.", category: "financial-statements" },
+  { slug: "pnl-schedule-iii", title: "P&L (Schedule III)", description: "Statutory format for Indian companies: Operating profit, provisions, profit before tax, taxes, and net profit.", category: "financial-statements" },
   { slug: "balance-sheet", title: "Balance Sheet", description: "Assets, liabilities and equity at a point in time, with computed retained earnings.", category: "financial-statements" },
+  { slug: "balance-sheet-schedule-iii", title: "Balance Sheet (Schedule III)", description: "Statutory format for Indian companies: Assets, liabilities, and equity classified per Schedule III.", category: "financial-statements" },
   { slug: "cash-flow", title: "Cash Flow Statement", description: "Indirect-method cash flow reconciled to opening and closing cash.", category: "financial-statements" },
   { slug: "trial-balance", title: "Trial Balance", description: "Debit and credit balances of every account — totals must agree.", category: "accounting-reports" },
   { slug: "general-ledger", title: "General Ledger", description: "Account-wise ledger with running balances, filters and drill-down.", category: "accounting-reports" },
