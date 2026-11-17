@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { PersonCell } from "@/components/shared/user-avatar";
 import { Eye, FileImage, FileSpreadsheet, FileText, Pencil, Plus, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,7 @@ export default function DocumentsPage() {
   const cols: Column<DocumentFile>[] = [
     { id: "name", header: "File", accessor: (d) => d.name, cell: (d) => { const I = icon(d.mime); return <button className="flex items-center gap-2 text-left font-medium text-primary hover:underline" onClick={(e) => { e.stopPropagation(); setView(d); }}><I className="size-4 shrink-0 text-muted-foreground" /><span className="truncate">{d.name}</span></button>; } },
     { id: "cat", header: "Category", accessor: (d) => d.category }, { id: "link", header: "Linked to", accessor: (d) => `${d.linkedType} ${d.linkedRef ?? ""}`, cell: (d) => d.linkedRef ?? <span className="text-muted-foreground">Unlinked</span>, hideBelow: "md" },
-    { id: "size", header: "Size", align: "right", accessor: (d) => d.size, cell: (d) => formatBytes(d.size), hideBelow: "md" }, { id: "by", header: "Uploaded by", accessor: (d) => d.uploadedBy, hideBelow: "lg" },
+    { id: "size", header: "Size", align: "right", accessor: (d) => d.size, cell: (d) => formatBytes(d.size), hideBelow: "md" }, { id: "by", header: "Uploaded by", accessor: (d) => d.uploadedBy, cell: (d) => <PersonCell name={d.uploadedBy} />, hideBelow: "lg" },
     { id: "at", header: "Created", accessor: (d) => d.createdAt, cell: (d) => formatDate(d.createdAt) }, { id: "mod", header: "Modified", accessor: (d) => d.modifiedAt, cell: (d) => <span className="text-xs text-muted-foreground">{formatDate(d.modifiedAt)} · {d.modifiedBy}</span>, hideBelow: "lg" },
   ];
   return (

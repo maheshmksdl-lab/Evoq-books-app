@@ -14,7 +14,7 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="aubergine" suppressHydrationWarning className={`${inter.variable} h-full`}>
+    <html lang="en" data-theme="modern" suppressHydrationWarning className={`${inter.variable} h-full`}>
       <head><script dangerouslySetInnerHTML={{ __html: themeInitScript }} /></head>
       <body className="h-full font-sans antialiased">
         <Providers>{children}</Providers>

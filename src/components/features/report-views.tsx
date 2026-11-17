@@ -10,6 +10,7 @@ import { SelectField } from "@/components/shared/form-controls";
 import { ErrorState, TableSkeleton } from "@/components/shared/states";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { StatCard } from "@/components/shared/stat-card";
+import { BasisNote, BasisToggle } from "@/components/shared/basis-toggle";
 import { AgeingBar } from "@/components/features/ageing";
 import { JournalDrawer } from "@/components/features/journal-view";
 import { ExpandControls, FilterBar, ReportFrame, ReportTable, groupIds, nodesToRows, periodLabel, useReportFilters, type RRow } from "@/components/features/report-parts";
@@ -24,7 +25,7 @@ const useCollapsed = () => { const [c, setC] = React.useState<Set<string>>(new S
 // -------------------------------------------------------------------------------- Profit & Loss
 export function PnlView() {
   const p = useUrlParams(); const { filters, state, set } = useReportFilters({ from: p?.get("from"), to: p?.get("to") });
-  const { data, isLoading, error, refetch } = usePnl({ from: filters.from, to: filters.to, ...(filters.compare ? { compareFrom: filters.compareFrom, compareTo: filters.compareTo } : {}) });
+  const { basis } = useApp(); const { data, isLoading, error, refetch } = usePnl({ from: filters.from, to: filters.to, basis, ...(filters.compare ? { compareFrom: filters.compareFrom, compareTo: filters.compareTo } : {}) });
   const c = useCollapsed(); const [hideZero] = [true];
   if (error) return <ErrorState error={error as Error} onRetry={() => refetch()} />;
   const cur = data?.current, prev = data?.previous ?? null;
@@ -39,9 +40,10 @@ export function PnlView() {
   const all = cur ? [cur.revenue, cur.cogs, cur.opex, cur.depreciation, cur.otherIncome, cur.finance].flatMap(groupIds) : [];
   void hideZero;
   return (
-    <ReportFrame title="Profit and Loss" subtitle={periodLabel(filters.from, filters.to)} exportName="profit-and-loss" getRows={() => [["Account", "Amount", ...(filters.compare ? ["Previous"] : [])], ...rows.map((r) => [r.label, r.amount, ...(filters.compare ? [r.prev ?? ""] : [])])]}
+    <ReportFrame title="Profit and Loss" subtitle={`${periodLabel(filters.from, filters.to)} · ${basis === "cash" ? "Cash basis" : "Accrual basis"}`} exportName="profit-and-loss" getRows={() => [["Account", "Amount", ...(filters.compare ? ["Previous"] : [])], ...rows.map((r) => [r.label, r.amount, ...(filters.compare ? [r.prev ?? ""] : [])])]}
       actions={cur && <span className="hidden text-xs text-muted-foreground sm:inline">Net margin {cur.totalRevenue ? ((cur.netProfit / cur.totalRevenue) * 100).toFixed(1) : 0}%</span>}>
-      <div className="no-print p-3 pb-0"><FilterBar state={state} set={set} /></div>
+      <div className="no-print flex flex-wrap items-end gap-3 p-3 pb-0"><div><p className="mb-1 text-[11px] font-medium text-muted-foreground">Report basis</p><BasisToggle /></div><div className="min-w-0 flex-1"><FilterBar state={state} set={set} /></div></div>
+      {basis === "cash" && <div className="px-3"><BasisNote /></div>}
       <ExpandControls onExpand={() => c.set(new Set())} onCollapse={() => c.set(new Set(all))} />
       {isLoading || !cur ? <TableSkeleton /> : <ReportTable rows={rows} compare={filters.compare} collapsed={c.collapsed} onToggle={c.toggle} from={filters.from} to={filters.to} percentOfFirst={cur.totalRevenue} labels={[periodLabel(filters.from, filters.to), periodLabel(filters.compareFrom, filters.compareTo)]} />}
     </ReportFrame>

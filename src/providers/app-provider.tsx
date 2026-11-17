@@ -9,8 +9,8 @@ import { rangeFromPreset } from "@/lib/accounting/fiscal";
 import { formatCompact, formatMoney } from "@/lib/formatters";
 
 const KEY = "evoq-books:ui:v1";
-interface Persisted { entityId: string; preset: string; from?: string; to?: string; collapsed: boolean; roleId: string; dismissed: string[]; expanded: string[] }
-const DEFAULTS: Persisted = { entityId: PRIMARY_ENTITY_ID, preset: "this_fy", collapsed: false, roleId: "role-finance", dismissed: [], expanded: [] };
+interface Persisted { entityId: string; preset: string; from?: string; to?: string; collapsed: boolean; roleId: string; dismissed: string[]; expanded: string[]; basis: "accrual" | "cash" }
+const DEFAULTS: Persisted = { entityId: PRIMARY_ENTITY_ID, preset: "this_fy", collapsed: false, roleId: "role-finance", dismissed: [], expanded: [], basis: "accrual" };
 
 interface AppCtx extends Persisted {
   ready: boolean;
@@ -25,6 +25,7 @@ interface AppCtx extends Persisted {
   setPreset: (preset: string, from?: string, to?: string) => void;
   setCollapsed: (v: boolean) => void;
   setRoleId: (id: string) => void;
+  setBasis: (b: "accrual" | "cash") => void;
   dismiss: (id: string) => void;
   toggleGroup: (id: string) => void;
   can: (group: PermissionGroup, action?: PermissionAction) => boolean;
@@ -58,6 +59,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setPreset: (preset, from, to) => setState((s) => ({ ...s, preset, from, to })),
     setCollapsed: (v) => setState((s) => ({ ...s, collapsed: v })),
     setRoleId: (id) => setState((s) => ({ ...s, roleId: id })),
+    setBasis: (b) => setState((s) => ({ ...s, basis: b })),
     dismiss: (id) => setState((s) => ({ ...s, dismissed: [...new Set([...s.dismissed, id])] })),
     toggleGroup: (id) => setState((s) => ({ ...s, expanded: s.expanded.includes(id) ? s.expanded.filter((x) => x !== id) : [...s.expanded, id] })),
     can: (g, a = "view") => (roles.length === 0 ? true : !!actingRole?.permissions[g]?.includes(a)),

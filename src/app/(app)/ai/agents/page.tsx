@@ -34,7 +34,7 @@ export default function AgentsPage() {
       <div className="grid gap-4 xl:grid-cols-[320px_1fr]">
         <ul className="space-y-2">{data.map((a) => (
           <li key={a.id}><button onClick={() => setSel(a.id)} className={cn("w-full rounded-lg border bg-card p-3 text-left transition-colors hover:border-soft hover:bg-surface", agent?.id === a.id && "border-action bg-accent/40")}>
-            <div className="flex items-start gap-2"><span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-depth text-white"><Bot className="size-4" /></span><div className="min-w-0 flex-1"><p className="text-sm font-medium">{a.name}</p><p className="line-clamp-2 text-xs text-muted-foreground">{a.description}</p></div><ChevronRight className="mt-1 size-4 text-muted-foreground" /></div>
+            <div className="flex items-start gap-2"><span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-accent text-primary"><Bot className="size-4" /></span><div className="min-w-0 flex-1"><p className="text-sm font-medium">{a.name}</p><p className="line-clamp-2 text-xs text-muted-foreground">{a.description}</p></div><ChevronRight className="mt-1 size-4 text-muted-foreground" /></div>
             <div className="mt-2 flex items-center justify-between text-[11px]"><StatusBadge status={a.status} /><span className="text-muted-foreground">{proposed(a) ? `${proposed(a)} proposal${proposed(a) > 1 ? "s" : ""} awaiting you` : "No open proposals"}</span></div></button></li>))}</ul>
         {agent && (
           <div className="space-y-4">

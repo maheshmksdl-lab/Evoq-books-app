@@ -91,7 +91,7 @@ export function DataTable<T>({ columns, data, rowKey, isLoading, error, onRetry,
   const actionsFor = (row: T) => (typeof rowActions === "function" ? rowActions(row) : rowActions ?? []).filter((a) => !a.hidden?.(row));
 
   return (
-    <div className={cn("overflow-hidden", !bare && "rounded-lg border bg-card shadow-[0_1px_0_rgba(31,36,48,0.03)]")}>
+    <div className={cn("overflow-hidden", !bare && "rounded-xl border bg-card shadow-[0_1px_2px_rgb(16_24_40/0.04)]")}>
       {(!hideSearch || filters || toolbar || exportName) && (
         <div className="no-print flex flex-wrap items-center gap-2 border-b p-2">
           {!hideSearch && (

@@ -290,3 +290,37 @@ export function closingEntries(d: LedgerData, from: ISODate, to: ISODate) {
   const np = netProfit(d, from, to);
   return { lines: lines.sort((a, b) => a.code.localeCompare(b.code)), netProfit: np, retainedEarnings: { debit: np < 0 ? -np : 0, credit: np > 0 ? np : 0 } };
 }
+
+// ---------------------------------------------------------------- Reporting basis
+export type ReportBasis = "accrual" | "cash";
+
+/**
+ * Cash-basis view of the ledger for profit-and-loss reporting. Invoices and bills (and their revenue/expense lines)
+ * are recognised in proportion to the payments applied to them, on the payment date. Everything else (expenses paid
+ * at posting, payroll, depreciation, manual journals, credit notes) is kept as booked. Balance-sheet accounts are
+ * dropped from the synthetic journals, so use the result for P&L-type calculations only.
+ */
+export function cashBasisData(d: LedgerData, invoices: Invoice[], bills: Bill[], payments: { date: ISODate; status: string; allocations: { docId: string; amount: number }[] }[]): LedgerData {
+  const accType = new Map(d.accounts.map((a) => [a.id, a.type]));
+  const pl = (l: JournalLine) => { const t = accType.get(l.accountId); return t === "income" || t === "expense"; };
+  const byDoc = new Map<string, Journal>();
+  const kept: Journal[] = [];
+  for (const j of d.journals) {
+    if ((j.kind === "invoice" || j.kind === "bill" || (j.kind === "intercompany" && (j.sourceType === "invoice" || j.sourceType === "bill"))) && j.sourceId) byDoc.set(j.sourceId, j);
+    else kept.push(j);
+  }
+  const out: Journal[] = kept.filter((j) => j.status === "posted" || j.status === "reversed");
+  const docBase = new Map<string, number>();
+  invoices.forEach((i) => docBase.set(i.id, i.total));
+  bills.forEach((b) => docBase.set(b.id, b.total - b.tdsAmount));
+  for (const p of payments) {
+    if (p.status !== "recorded") continue;
+    for (const a of p.allocations) {
+      const j = byDoc.get(a.docId); const total = docBase.get(a.docId);
+      if (!j || !total || (j.status !== "posted" && j.status !== "reversed")) continue;
+      const ratio = Math.min(1, a.amount / total);
+      out.push({ ...j, id: `${j.id}-cash-${p.date}-${a.amount}`, date: p.date, status: "posted", lines: j.lines.filter(pl).map((l) => ({ ...l, debit: l.debit * ratio, credit: l.credit * ratio })) });
+    }
+  }
+  return { ...d, journals: out };
+}

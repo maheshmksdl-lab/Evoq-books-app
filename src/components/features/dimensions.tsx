@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { PersonCell } from "@/components/shared/user-avatar";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export function DimensionManager({ kind }: { kind: Dimension["kind"] }) {
   const rows = data ?? []; const tot = (k: "revenue" | "cost" | "profit") => rows.reduce((s, x) => s + x[k], 0);
   const proj = kind === "project";
   const cols: Column<DRow>[] = [
-    { id: "code", header: "Code", accessor: (d) => d.code, className: "tnum w-24" }, { id: "n", header: LABEL[kind], accessor: (d) => d.name, cell: (d) => <span className="font-medium">{d.name}</span> }, { id: "o", header: "Owner", accessor: (d) => d.owner, hideBelow: "md" },
+    { id: "code", header: "Code", accessor: (d) => d.code, className: "tnum w-24" }, { id: "n", header: LABEL[kind], accessor: (d) => d.name, cell: (d) => <span className="font-medium">{d.name}</span> }, { id: "o", header: "Owner", accessor: (d) => d.owner, cell: (d) => <PersonCell name={d.owner} />, hideBelow: "md" },
     ...(proj ? [{ id: "dt", header: "Timeline", accessor: (d: DRow) => d.startDate ?? "", cell: (d: DRow) => <span className="text-xs text-muted-foreground">{d.startDate ? formatDate(d.startDate, "MMM yy") : "—"} → {d.endDate ? formatDate(d.endDate, "MMM yy") : "—"}</span>, hideBelow: "lg" as const }] : []),
     { id: "rev", header: "Revenue", align: "right", accessor: (d) => d.revenue, cell: (d) => (d.revenue ? f.money(d.revenue) : "—") }, { id: "cost", header: "Cost", align: "right", accessor: (d) => d.cost, cell: (d) => f.money(d.cost) },
     { id: "p", header: proj ? "Profit" : "Net", align: "right", accessor: (d) => d.profit, cell: (d) => <span className={d.profit < 0 ? "text-error" : ""}>{f.money(d.profit, undefined, { parens: true })}</span> }, ...(proj ? [{ id: "m", header: "Margin", align: "right" as const, accessor: (d: DRow) => d.margin, cell: (d: DRow) => (d.revenue ? `${d.margin.toFixed(1)}%` : "—") }] : []),

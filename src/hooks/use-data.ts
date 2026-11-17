@@ -101,8 +101,8 @@ export const useTaxTransactions = (from: string, to: string) => useEntityQuery([
 export const useTds = () => useEntityQuery([...qk.tax, "tds"], (e) => services.tax.tds(e));
 export const useItc = (from: string, to: string) => useEntityQuery([...qk.tax, "itc", from, to], (e) => services.tax.itc(e, from, to));
 export const useTaxCodes = () => useEntityQuery([...qk.tax, "codes"], (e) => services.tax.codes(e));
-export const useDashboard = (from: string, to: string) => useEntityQuery([...qk.reports, "dashboard", from, to], (e) => services.reports.dashboard(e, { from, to }));
-export const usePnl = (i: { from: string; to: string; compareFrom?: string; compareTo?: string }) => useEntityQuery([...qk.reports, "pnl", i], (e) => services.reports.pnl(e, i));
+export const useDashboard = (from: string, to: string, basis: "accrual" | "cash" = "accrual") => useEntityQuery([...qk.reports, "dashboard", from, to, basis], (e) => services.reports.dashboard(e, { from, to, basis }));
+export const usePnl = (i: { from: string; to: string; compareFrom?: string; compareTo?: string; basis?: "accrual" | "cash" }) => useEntityQuery([...qk.reports, "pnl", i], (e) => services.reports.pnl(e, i));
 export const useBalanceSheet = (i: { asOf: string; compareAsOf?: string }) => useEntityQuery([...qk.reports, "bs", i], (e) => services.reports.balanceSheet(e, i));
 export const useCashFlow = (i: { from: string; to: string }) => useEntityQuery([...qk.reports, "cf", i], (e) => services.reports.cashFlow(e, i));
 export const useTrialBalance = (asOf: string) => useEntityQuery([...qk.reports, "tb", asOf], (e) => services.reports.trialBalance(e, { asOf }));

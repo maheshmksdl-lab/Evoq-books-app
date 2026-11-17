@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ByLine } from "@/components/shared/user-avatar";
 import Link from "next/link";
 import { ExternalLink, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -61,7 +62,7 @@ export function JournalDrawer({ journalId, onClose }: { journalId: string | null
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <KV label="Date">{formatDate(j.date)}</KV><KV label="Status"><StatusBadge status={j.status} /></KV><KV label="Type">{titleCase(j.kind)}</KV>
           <KV label="Source">{j.sourceRef}</KV><KV label="Reference">{j.reference}</KV><KV label="Currency">{j.currency}{j.fxRate !== 1 ? ` @ ${j.fxRate}` : ""}</KV>
-          <KV label="Created">{j.createdBy} · {formatDateTime(j.createdAt)}</KV>{j.postedAt && <KV label="Posted">{j.postedBy} · {formatDateTime(j.postedAt)}</KV>}
+          <KV label="Created"><ByLine name={j.createdBy} at={j.createdAt} /></KV>{j.postedAt && <KV label="Posted"><ByLine name={j.postedBy ?? ""} at={j.postedAt} /></KV>}
         </dl>
         {j.aiSuggested && <p className="flex items-center gap-1.5 rounded-md border border-dashed border-soft bg-surface px-2 py-1 text-xs"><FlaskConical className="size-3.5 text-primary" /> Originated from a simulated AI suggestion and reviewed by a person.</p>}
         <JournalLinesTable journal={j} />

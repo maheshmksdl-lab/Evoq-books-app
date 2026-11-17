@@ -31,12 +31,12 @@ export function TrendChart({ data, series, xKey = "label", height = 240, currenc
   return (
     <div role="img" aria-label={ariaLabel ?? "Chart"} style={{ height }} className="w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={data} margin={{ top: 6, right: 8, left: 0, bottom: 0 }} onClick={(e) => { const p = (e as unknown as { activePayload?: { payload: Record<string, string | number> }[] })?.activePayload?.[0]?.payload; if (p && onPointClick) onPointClick(p); }} style={{ cursor: onPointClick ? "pointer" : undefined }}>
+        <ComposedChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }} onClick={(e) => { const p = (e as unknown as { activePayload?: { payload: Record<string, string | number> }[] })?.activePayload?.[0]?.payload; if (p && onPointClick) onPointClick(p); }} style={{ cursor: onPointClick ? "pointer" : undefined }}>
           <CartesianGrid vertical={false} stroke="var(--n-border)" />
           <XAxis dataKey={xKey} tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "var(--n-muted)" }} interval="preserveStartEnd" />
           <YAxis tickLine={false} axisLine={false} width={60} tick={{ fontSize: 11, fill: "var(--n-muted)" }} tickFormatter={(v) => (percent ? `${v}%` : formatCompact(Number(v), cur).replace("₹", "₹"))} />
           <Tooltip content={<MoneyTooltip currency={cur} />} cursor={{ fill: "var(--t-tint)", opacity: 0.5 }} />
-          {series.length > 1 && <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11 }} />}
+          {series.length > 1 && <Legend verticalAlign="top" align="right" iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingBottom: 8 }} />}
           {refY !== undefined && <ReferenceLine y={refY} stroke="var(--s-warning)" strokeDasharray="4 4" />}
           {series.map((s, i) => {
             const color = s.color ?? CHART_COLORS[i % CHART_COLORS.length];

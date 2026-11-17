@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Pencil, Plus, ShieldCheck, Trash2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -48,7 +49,7 @@ export default function UsersRolesPage() {
   const delRole = useEntityMutation((e, id: string) => services.org.deleteRole(e, id), { success: "Role deleted", invalidate: [["roles"]], onDone: () => setSel("") });
   const saveUser = useEntityMutation((e, u: Partial<AppUser> & { name: string; email: string; roleId: string }) => services.org.saveUser(e, u), { success: (u) => (u.status === "invited" ? `Invitation to ${u.email} simulated — no email was sent` : "User updated") });
   const cols: Column<AppUser>[] = [
-    { id: "n", header: "User", accessor: (u) => u.name, cell: (u) => <span className="flex items-center gap-2"><span className="flex size-7 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-white">{initials(u.name)}</span><span><span className="block text-[13px] font-medium">{u.name}</span><span className="block text-[11px] text-muted-foreground">{u.email}</span></span></span> },
+    { id: "n", header: "User", accessor: (u) => u.name, cell: (u) => <span className="flex items-center gap-2"><UserAvatar name={u.name} size={32} /><span><span className="block text-[13px] font-medium">{u.name}</span><span className="block text-[11px] text-muted-foreground">{u.email}</span></span></span> },
     { id: "r", header: "Role", accessor: (u) => rs.find((r) => r.id === u.roleId)?.name ?? "" }, { id: "s", header: "Status", accessor: (u) => u.status, cell: (u) => <StatusBadge status={u.status} /> }, { id: "l", header: "Last active", accessor: (u) => u.lastActive, cell: (u) => (u.lastActive ? formatDateTime(u.lastActive) : "—"), hideBelow: "md" },
   ];
   return (

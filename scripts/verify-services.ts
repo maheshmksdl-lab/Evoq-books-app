@@ -103,3 +103,4 @@ const balanced = (e: string) => { const tb = trialBalance(ledger(e), TODAY); con
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
 })();
+

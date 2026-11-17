@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/shared/page-header";
 import { ExportMenu } from "@/components/shared/export-menu";
 import { PeriodPicker } from "@/components/shared/range-picker";
+import { BasisToggle, BasisNote } from "@/components/shared/basis-toggle";
 import { EmptyState, ErrorState } from "@/components/shared/states";
 import { Panel, StatCard } from "@/components/shared/stat-card";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -29,8 +30,8 @@ const WIDGETS = [
 const pct = (cur: number, prev: number) => (prev ? ((cur - prev) / Math.abs(prev)) * 100 : NaN);
 
 export default function DashboardPage() {
-  const router = useRouter(); const { range, entity } = useApp(); const f = useFormat();
-  const { data: d, isLoading, error, refetch } = useDashboard(range.from, range.to);
+  const router = useRouter(); const { range, entity, basis } = useApp(); const f = useFormat();
+  const { data: d, isLoading, error, refetch } = useDashboard(range.from, range.to, basis);
   const [hidden, setHidden] = useLocalPref<string[]>("dash-hidden", []);
   const show = (id: string) => !hidden.includes(id);
   const drill = (m: Record<string, string | number>) => { const key = String(d?.series.find((s) => s.label === m.label)?.month); router.push(`/reports/view/pnl?from=${key}-01&to=${monthEnd(`${key}-01`)}`); };
@@ -39,6 +40,7 @@ export default function DashboardPage() {
     <>
       <PageHeader title="Dashboard" description={`${entity?.name ?? ""} · figures follow the selected period; trends show the last 12 months.`}
         actions={<>
+          <BasisToggle />
           <PeriodPicker />
           <Popover>
             <PopoverTrigger asChild><Button variant="outline" size="sm"><LayoutGrid /> Widgets</Button></PopoverTrigger>
@@ -50,9 +52,10 @@ export default function DashboardPage() {
           </Popover>
           <ExportMenu filename="dashboard-summary" getRows={() => d ? [["Metric", "Value"], ["Cash & bank", d.cashTotal], ["Income", d.income], ["Expenses", d.expense], ["Net profit", d.netProfit], ["Receivables", d.ar], ["Payables", d.ap]] : []} />
         </>} />
+      <BasisNote />
       {error ? <ErrorState error={error as Error} onRetry={() => refetch()} /> : (
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-6">
             {isLoading || !d ? Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-[92px]" />) : (<>
               <StatCard label="Cash & bank" value={f.money(d.cashTotal)} icon={<Wallet className="size-4" />} hint={`${d.banks.filter((b) => b.type !== "credit_card").length} accounts`} onClick={() => router.push("/banking/accounts")} />
               <StatCard label="Total income" value={f.money(d.income)} icon={<TrendingUp className="size-4" />} delta={pct(d.income, d.prevIncome)} deltaGood={d.income >= d.prevIncome} hint="vs previous period" onClick={() => router.push(`/reports/view/pnl?from=${range.from}&to=${range.to}`)} />

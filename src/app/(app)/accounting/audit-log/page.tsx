@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { PersonCell } from "@/components/shared/user-avatar";
 import { PageHeader } from "@/components/shared/page-header";
 import { DataTable, type Column } from "@/components/shared/data-table";
 import { SelectField } from "@/components/shared/form-controls";
@@ -11,7 +12,7 @@ export default function Page() {
   const { data, isLoading, error, refetch } = useAudit(); const [type, setType] = React.useState("all");
   const types = [...new Set((data ?? []).map((a) => a.objectType))];
   const cols: Column<AuditEntry>[] = [
-    { id: "at", header: "When", accessor: (a) => a.at, cell: (a) => formatDateTime(a.at) }, { id: "user", header: "User", accessor: (a) => a.user },
+    { id: "at", header: "When", accessor: (a) => a.at, cell: (a) => formatDateTime(a.at) }, { id: "user", header: "User", accessor: (a) => a.user, cell: (a) => <PersonCell name={a.user} /> },
     { id: "action", header: "Action", accessor: (a) => a.action, cell: (a) => <span className="font-medium">{a.action}</span> }, { id: "type", header: "Object", accessor: (a) => titleCase(a.objectType), hideBelow: "md" },
     { id: "ref", header: "Reference", accessor: (a) => a.ref }, { id: "detail", header: "Detail", accessor: (a) => a.detail, hideBelow: "lg", className: "max-w-[320px] truncate" },
   ];

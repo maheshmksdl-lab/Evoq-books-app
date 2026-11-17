@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ByLine, PersonCell } from "@/components/shared/user-avatar";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { CheckCircle2, Pencil, Repeat, Send, XCircle } from "lucide-react";
@@ -40,8 +41,8 @@ export default function ExpenseDetailPage() {
       <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4"><StatCard label="Total amount" value={f.money(x.amount)} /><StatCard label="Net of tax" value={f.money(x.amount - x.taxAmount)} /><StatCard label={`GST (${x.gstRate}%)`} value={f.money(x.taxAmount)} hint={titleCase(x.taxTreatment)} /><StatCard label="Category" value={x.categoryName} /></div>
       <div className="grid gap-4 xl:grid-cols-[1fr_340px]">
         <div className="space-y-4">
-          <Panel title="Details"><dl className="grid grid-cols-2 gap-4 md:grid-cols-3"><KV label="Date">{formatDate(x.date)}</KV><KV label="Vendor">{x.vendorName}</KV><KV label="Payment account">{x.paymentName}</KV><KV label="Method">{x.paymentMethod.toUpperCase()}</KV><KV label="Submitted by">{x.submittedBy}</KV><KV label="Created">{formatDateTime(x.createdAt)}</KV>{x.recurring && <KV label="Recurring"><span className="inline-flex items-center gap-1"><Repeat className="size-3" /> {titleCase(x.recurring.frequency)} · next {formatDate(x.recurring.nextDate)}</span></KV>}</dl></Panel>
-          <Panel title="Approval history">{approvals.length === 0 ? <p className="text-xs text-muted-foreground">{x.status === "paid" ? "Approved automatically — below the approval limit." : "Not submitted yet."}</p> : <ol className="space-y-2 border-l pl-3">{approvals.flatMap((a) => a.history).map((h, i) => <li key={i} className="relative text-xs"><span className="absolute -left-[17px] top-1 size-2 rounded-full bg-action" /><p className="font-medium capitalize">{h.action}</p><p className="text-muted-foreground">{h.by} · {formatDateTime(h.at)}</p>{h.comment && <p>{h.comment}</p>}</li>)}</ol>}</Panel>
+          <Panel title="Details"><dl className="grid grid-cols-2 gap-4 md:grid-cols-3"><KV label="Date">{formatDate(x.date)}</KV><KV label="Vendor">{x.vendorName}</KV><KV label="Payment account">{x.paymentName}</KV><KV label="Method">{x.paymentMethod.toUpperCase()}</KV><KV label="Submitted by"><PersonCell name={x.submittedBy} /></KV><KV label="Created">{formatDateTime(x.createdAt)}</KV>{x.recurring && <KV label="Recurring"><span className="inline-flex items-center gap-1"><Repeat className="size-3" /> {titleCase(x.recurring.frequency)} · next {formatDate(x.recurring.nextDate)}</span></KV>}</dl></Panel>
+          <Panel title="Approval history">{approvals.length === 0 ? <p className="text-xs text-muted-foreground">{x.status === "paid" ? "Approved automatically — below the approval limit." : "Not submitted yet."}</p> : <ol className="space-y-2 border-l pl-3">{approvals.flatMap((a) => a.history).map((h, i) => <li key={i} className="relative text-xs"><span className="absolute -left-[17px] top-1 size-2 rounded-full bg-action" /><p className="font-medium capitalize">{h.action}</p><ByLine name={h.by} at={h.at} />{h.comment && <p>{h.comment}</p>}</li>)}</ol>}</Panel>
         </div>
         <Panel title="Receipt">
           {receipt ? (<div className="space-y-2">{receipt.dataUrl?.startsWith("data:image") ?   <img src={receipt.dataUrl} alt={receipt.name} className="max-h-72 w-full rounded border object-contain" /> : <pre className="max-h-60 overflow-auto whitespace-pre-wrap rounded border bg-white p-3 font-mono text-xs">{receipt.previewText ?? "No preview available"}</pre>}<p className="text-xs text-muted-foreground">{receipt.name} · {formatBytes(receipt.size)}</p></div>)

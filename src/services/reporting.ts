@@ -8,10 +8,13 @@ import { fiscalYearOf, monthEnd, monthLabel } from "@/lib/accounting/fiscal";
 import { TODAY } from "@/lib/constants";
 import { round2 } from "@/lib/formatters";
 import { accId } from "@/lib/mock/chart";
+import type { ReportBasis } from "@/lib/accounting/engine";
+import { cashBasisData } from "@/lib/accounting/engine";
 import { ServiceError, createJournalRecord, latency, ledgerData, maybeFail } from "./base";
 import { bankingService } from "./banking";
 import { invoiceRow, billRow } from "./transactions";
 
+const cashLedger = (e: ID) => cashBasisData(ledgerData(e), list("invoices", e), list("bills", e), list("payments", e));
 const monthsBack = (n: number, until = TODAY) => Array.from({ length: n }, (_, i) => format(addMonths(parseISO(until), -(n - 1 - i)), "yyyy-MM"));
 const nm = (id: ID) => get("contacts", id)?.name ?? "—";
 
@@ -57,12 +60,12 @@ export const taxService = {
 };
 
 export const reportsService = {
-  async dashboard(e: ID, i: { from: string; to: string }) {
+  async dashboard(e: ID, i: { from: string; to: string; basis?: ReportBasis }) {
     await latency(120); maybeFail();
-    const d = ledgerData(e); const ent = d.entity; const base = ent.baseCurrency;
+    const d = ledgerData(e); const ent = d.entity; const base = ent.baseCurrency; const dp = i.basis === "cash" ? cashLedger(e) : d;
     const span = Math.round((parseISO(i.to).getTime() - parseISO(i.from).getTime()) / 86400000) + 1;
     const prevTo = format(new Date(parseISO(i.from).getTime() - 86400000), "yyyy-MM-dd"), prevFrom = format(new Date(parseISO(prevTo).getTime() - (span - 1) * 86400000), "yyyy-MM-dd");
-    const pl = profitAndLoss(d, i.from, i.to), prev = profitAndLoss(d, prevFrom, prevTo);
+    const pl = profitAndLoss(dp, i.from, i.to), prev = profitAndLoss(dp, prevFrom, prevTo);
     const income = round2(pl.totalRevenue + pl.totalOther), expense = round2(pl.totalCogs + pl.totalOpex + pl.totalDep + pl.totalFinance);
     const prevIncome = round2(prev.totalRevenue + prev.totalOther), prevExpense = round2(prev.totalCogs + prev.totalOpex + prev.totalDep + prev.totalFinance);
     const bal = balancesAsOf(d, TODAY);
@@ -72,7 +75,7 @@ export const reportsService = {
     const ar = round2(bal.get(accId(e, "1120")) ?? 0), ap = round2(bal.get(accId(e, "2110")) ?? 0);
     const overdueAr = round2(invoices.filter((x) => x.displayStatus === "overdue").reduce((s, x) => s + x.outstandingBase, 0));
     const months = monthsBack(12);
-    const series = months.map((m) => { const p = profitAndLoss(d, `${m}-01`, monthEnd(`${m}-01`)); const inc = p.totalRevenue + p.totalOther, exp = p.totalCogs + p.totalOpex + p.totalDep + p.totalFinance; const cashBal = ["1111", "1112", "1113", "1114"].reduce((s, c) => s + (balancesAsOf(d, monthEnd(`${m}-01`)).get(accId(e, c)) ?? 0), 0); const mv = movements(d, `${m}-01`, monthEnd(`${m}-01`), (_l, j) => !j.sourceRef.startsWith("TRF-")); const cashIds = d.accounts.filter((a) => a.cashFlow === "cash").map((a) => a.id); let inflow = 0, outflow = 0; cashIds.forEach((id) => { const x = mv.get(id); if (x) { inflow += x.debit; outflow += x.credit; } }); return { month: m, label: monthLabel(m), income: round2(inc), expense: round2(exp), profit: round2(inc - exp), cash: round2(cashBal), inflow: round2(inflow), outflow: round2(outflow), revenue: p.totalRevenue, gross: p.grossProfit }; });
+    const series = months.map((m) => { const p = profitAndLoss(dp, `${m}-01`, monthEnd(`${m}-01`)); const inc = p.totalRevenue + p.totalOther, exp = p.totalCogs + p.totalOpex + p.totalDep + p.totalFinance; const cashBal = ["1111", "1112", "1113", "1114"].reduce((s, c) => s + (balancesAsOf(d, monthEnd(`${m}-01`)).get(accId(e, c)) ?? 0), 0); const mv = movements(d, `${m}-01`, monthEnd(`${m}-01`), (_l, j) => !j.sourceRef.startsWith("TRF-")); const cashIds = d.accounts.filter((a) => a.cashFlow === "cash").map((a) => a.id); let inflow = 0, outflow = 0; cashIds.forEach((id) => { const x = mv.get(id); if (x) { inflow += x.debit; outflow += x.credit; } }); return { month: m, label: monthLabel(m), income: round2(inc), expense: round2(exp), profit: round2(inc - exp), cash: round2(cashBal), inflow: round2(inflow), outflow: round2(outflow), revenue: p.totalRevenue, gross: p.grossProfit }; });
     const custMap = new Map<string, number>(); invoices.forEach((x) => { if (x.outstanding > 0.01 && !["draft", "void"].includes(x.status)) custMap.set(x.customerId, (custMap.get(x.customerId) ?? 0) + x.outstandingBase); });
     const topCustomers = [...custMap.entries()].map(([id, amt]) => ({ id, name: nm(id), amount: round2(amt), overdue: round2(invoices.filter((x) => x.customerId === id && x.displayStatus === "overdue").reduce((s, x) => s + x.outstandingBase, 0)) })).sort((a, b) => b.amount - a.amount).slice(0, 6);
     const upcoming = bills.filter((b) => b.outstanding > 0.01 && !["draft", "pending_approval", "rejected", "void", "paid"].includes(b.displayStatus)).sort((a, b) => a.dueDate.localeCompare(b.dueDate)).slice(0, 7).map((b) => ({ id: b.id, number: b.number, vendor: b.vendorName, dueDate: b.dueDate, amount: b.outstandingBase, overdue: b.dueDate < TODAY }));
@@ -83,7 +86,7 @@ export const reportsService = {
     const periods = list("periods", e).filter((p) => p.start >= fy.start && p.end <= fy.end);
     return { base, income, expense, netProfit: round2(income - expense), prevIncome, prevExpense, prevNet: round2(prevIncome - prevExpense), cashTotal, banks, ar, ap, overdueAr, series, topCustomers, upcoming, recent, unreconciled: { count: unrec.length, value: round2(unrec.reduce((s, t) => s + t.deposit + t.withdrawal, 0)), items: unrec.slice(0, 5) }, tax: { net: tax.netGstLiability, tds: tax.tdsPayable, itc: tax.itcBalance, gst: tax.gstPayableLedger }, fy: { label: fy.label, start: fy.start, end: fy.end, elapsed, openPeriods: periods.filter((p) => p.status === "open").length, closedPeriods: periods.filter((p) => p.status !== "open").length }, pl };
   },
-  async pnl(e: ID, i: { from: string; to: string; compareFrom?: string; compareTo?: string }) { await latency(90); maybeFail(); const d = ledgerData(e); return { current: profitAndLoss(d, i.from, i.to), previous: i.compareFrom && i.compareTo ? profitAndLoss(d, i.compareFrom, i.compareTo) : null }; },
+  async pnl(e: ID, i: { from: string; to: string; compareFrom?: string; compareTo?: string; basis?: ReportBasis }) { await latency(90); maybeFail(); const d = i.basis === "cash" ? cashLedger(e) : ledgerData(e); return { current: profitAndLoss(d, i.from, i.to), previous: i.compareFrom && i.compareTo ? profitAndLoss(d, i.compareFrom, i.compareTo) : null }; },
   async balanceSheet(e: ID, i: { asOf: string; compareAsOf?: string }) { await latency(90); maybeFail(); const d = ledgerData(e); return { current: balanceSheet(d, i.asOf), previous: i.compareAsOf ? balanceSheet(d, i.compareAsOf) : null }; },
   async cashFlow(e: ID, i: { from: string; to: string }) { await latency(90); return cashFlow(ledgerData(e), i.from, i.to); },
   async trialBalance(e: ID, i: { asOf: string }) { await latency(80); maybeFail(); return trialBalance(ledgerData(e), i.asOf); },

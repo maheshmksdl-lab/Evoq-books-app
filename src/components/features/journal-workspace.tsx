@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ByLine } from "@/components/shared/user-avatar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
@@ -163,9 +164,9 @@ function Workspace({ journal: j, template, editable, router, money, today, requi
           <Panel title="Status & audit">
             <dl className="space-y-2">
               <KV label="Status">{j ? <StatusBadge status={j.status} /> : <StatusBadge status="draft" label="New" />}</KV>
-              <KV label="Created by">{j ? `${j.createdBy} · ${formatDateTime(j.createdAt)}` : "—"}</KV>
-              <KV label="Last modified">{j ? `${j.updatedBy} · ${formatDateTime(j.updatedAt)}` : "—"}</KV>
-              {j?.postedAt && <KV label="Posted by">{`${j.postedBy} · ${formatDateTime(j.postedAt)}`}</KV>}
+              <KV label="Created by">{j ? <ByLine name={j.createdBy} at={j.createdAt} /> : "—"}</KV>
+              <KV label="Last modified">{j ? <ByLine name={j.updatedBy} at={j.updatedAt} /> : "—"}</KV>
+              {j?.postedAt && <KV label="Posted by"><ByLine name={j.postedBy ?? ""} at={j.postedAt} /></KV>}
               {j?.aiSuggested && <KV label="Origin"><Badge variant="outline" className="border-dashed">AI-suggested · human reviewed</Badge></KV>}
             </dl>
           </Panel>
@@ -180,7 +181,7 @@ function Workspace({ journal: j, template, editable, router, money, today, requi
             {editable && <FilePicker onFiles={(fs) => fs.forEach((f) => upload.mutate(f))} multiple label="Attach file" description="Drop receipts or workings" />}
           </Panel>
           {j && <Panel title="History">
-            {history.isLoading ? <TableSkeleton rows={3} cols={2} /> : <ol className="space-y-2 border-l pl-3">{(history.data ?? []).map((h, i) => <li key={i} className="relative text-xs"><span className="absolute -left-[17px] top-1 size-2 rounded-full bg-action" /><p className="font-medium">{h.action}</p><p className="text-muted-foreground">{h.user} · {formatDateTime(h.at)}</p>{h.detail && <p className="text-muted-foreground">{h.detail}</p>}</li>)}</ol>}
+            {history.isLoading ? <TableSkeleton rows={3} cols={2} /> : <ol className="space-y-2 border-l pl-3">{(history.data ?? []).map((h, i) => <li key={i} className="relative text-xs"><span className="absolute -left-[17px] top-1 size-2 rounded-full bg-action" /><p className="font-medium">{h.action}</p><ByLine name={h.user} at={h.at} />{h.detail && <p className="text-muted-foreground">{h.detail}</p>}</li>)}</ol>}
           </Panel>}
         </aside>
       </div>

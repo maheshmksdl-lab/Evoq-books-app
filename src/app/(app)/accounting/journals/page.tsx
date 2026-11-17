@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { PersonCell } from "@/components/shared/user-avatar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Copy, Eye, Pencil, Play, Plus, RotateCcw, Trash2 } from "lucide-react";
@@ -36,7 +37,7 @@ export default function JournalsPage() {
     { id: "desc", header: "Description", accessor: (j) => j.description, className: "max-w-[320px] truncate" },
     { id: "type", header: "Type", accessor: (j) => titleCase(j.kind), hideBelow: "md" },
     { id: "source", header: "Source", accessor: (j) => j.sourceRef, hideBelow: "lg" },
-    { id: "by", header: "Created by", accessor: (j) => j.createdBy, hideBelow: "lg" },
+    { id: "by", header: "Created by", accessor: (j) => j.createdBy, cell: (j) => <PersonCell name={j.createdBy} />, hideBelow: "lg" },
     { id: "amount", header: "Amount", align: "right", accessor: (j) => j.amount, cell: (j) => f.money(j.amount) },
     { id: "status", header: "Status", accessor: (j) => j.status, cell: (j) => <StatusBadge status={j.status} /> },
   ];

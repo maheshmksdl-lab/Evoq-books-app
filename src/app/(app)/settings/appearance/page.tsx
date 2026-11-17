@@ -17,13 +17,13 @@ import { cn } from "@/lib/utils";
 
 /** Mini application preview painted with a theme's own palette (independent of the active theme). */
 function ThemePreview({ t }: { t: ProductTheme }) {
-  const p = t.palette;
+  const p = t.palette; const light = t.chrome === "light";
   return (
     <div className="overflow-hidden rounded-lg border" style={{ background: "#F8FAFC" }} aria-hidden>
       <div className="flex h-28">
-        <div className="w-14 shrink-0 space-y-1.5 p-2" style={{ background: p.depth }}>
-          <div className="h-2 w-8 rounded" style={{ background: p.soft }} />
-          {[0, 1, 2, 3].map((i) => <div key={i} className="h-1.5 rounded" style={{ background: i === 1 ? p.action : "rgba(255,255,255,0.22)", width: i === 1 ? "100%" : "75%" }} />)}
+        <div className="w-14 shrink-0 space-y-1.5 p-2" style={light ? { background: "#fff", borderRight: "1px solid #E6EAF0" } : { background: p.depth }}>
+          <div className="h-2 w-8 rounded" style={{ background: light ? p.primary : p.soft }} />
+          {[0, 1, 2, 3].map((i) => <div key={i} className="h-1.5 rounded" style={{ background: i === 1 ? (light ? p.tint : p.action) : light ? "#E6EAF0" : "rgba(255,255,255,0.22)", width: i === 1 ? "100%" : "75%", borderLeft: light && i === 1 ? `2px solid ${p.primary}` : undefined }} />)}
         </div>
         <div className="flex-1 space-y-1.5 p-2">
           <div className="flex items-center justify-between"><div className="h-2 w-16 rounded bg-[#1F2430]/70" /><div className="h-4 w-12 rounded text-[8px] leading-4 text-white" style={{ background: p.primary }}><span className="block text-center">Save</span></div></div>
@@ -45,11 +45,11 @@ export default function AppearancePage() {
   return (
     <>
       <PageHeader title="Appearance" description="Choose the product theme. The whole application updates immediately and the choice is remembered in this browser." />
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border bg-surface px-3 py-2 text-sm"><span className="font-medium">Active theme:</span><span>{active.name}</span><div className="flex overflow-hidden rounded border">{Object.values(active.palette).map((c) => <span key={c} className="size-4" style={{ background: c }} />)}</div><span className="text-xs text-muted-foreground">Saved to localStorage · default is Aubergine &amp; Lavender</span></div>
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border bg-surface px-3 py-2 text-sm"><span className="font-medium">Active theme:</span><span>{active.name}</span><div className="flex overflow-hidden rounded border">{Object.values(active.palette).map((c) => <span key={c} className="size-4" style={{ background: c }} />)}</div><span className="text-xs text-muted-foreground">Saved to localStorage · default is EVOQ Modern Light</span></div>
       <div className="grid gap-4 md:grid-cols-2">
         {THEMES.map((t) => { const on = t.id === theme; return (
           <section key={t.id} className={cn("rounded-xl border bg-card p-3 transition-shadow", on ? "border-action ring-2 ring-action/30" : "hover:shadow-sm")} aria-label={t.name}>
-            <div className="mb-2 flex items-start justify-between gap-2"><div><h2 className="text-sm font-semibold">{t.name}</h2><p className="text-xs text-muted-foreground">{t.tagline}</p></div>{on && <StatusBadge status="active" label="Selected" />}</div>
+            <div className="mb-2 flex items-start justify-between gap-2"><div><h2 className="text-sm font-semibold">{t.name}</h2><p className="text-xs text-muted-foreground">{t.tagline}</p></div><div className="flex items-center gap-1.5"><span className="rounded-full border px-2 py-0.5 text-[10px] text-muted-foreground">{t.chrome === "light" ? "Light chrome" : "Dark sidebar"}</span>{on && <StatusBadge status="active" label="Selected" />}</div></div>
             <ThemePreview t={t} />
             <ul className="mt-3 grid grid-cols-7 gap-1.5">{PALETTE_ROLES.map((r) => (<li key={r.key} className="min-w-0 text-center" title={`${r.label} — ${r.use}`}><span className="block h-8 rounded-md border" style={{ background: t.palette[r.key] }} /><span className="mt-1 block truncate text-[10px] font-medium">{r.label}</span><span className="tnum block text-[9px] text-muted-foreground">{t.palette[r.key]}</span></li>))}</ul>
             <Button className="mt-3 w-full" variant={on ? "secondary" : "default"} onClick={() => { setTheme(t.id); toast.success(`${t.name} applied`); }} aria-pressed={on}>{on ? <><Check /> Selected</> : "Select theme"}</Button>

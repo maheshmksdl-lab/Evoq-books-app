@@ -7,12 +7,12 @@ export function StatCard({ label, value, hint, delta, deltaGood, icon, onClick, 
 }) {
   const Comp = onClick ? "button" : "div";
   return (
-    <Comp onClick={onClick} className={cn("group rounded-lg border bg-card p-3 text-left shadow-[0_1px_0_rgba(31,36,48,0.03)] transition-colors", onClick && "hover:border-soft hover:bg-surface focus-visible:ring-2 focus-visible:ring-ring", className)}>
+    <Comp onClick={onClick} className={cn("group flex min-h-[96px] flex-col rounded-xl border bg-card p-3.5 text-left shadow-[0_1px_2px_rgb(16_24_40/0.04)] transition-all", onClick && "hover:-translate-y-px hover:border-soft hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring", className)}>
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium text-muted-foreground">{label}</span>
-        {icon && <span className="text-primary/70">{icon}</span>}
+        <span className="text-[12px] font-medium text-muted-foreground">{label}</span>
+        {icon && <span className="flex size-7 items-center justify-center rounded-lg bg-accent text-primary">{icon}</span>}
       </div>
-      <div className={cn("tnum mt-1 text-lg font-semibold leading-tight tracking-tight", valueClassName)}>{value}</div>
+      <div className={cn("tnum mt-1.5 text-[19px] font-semibold leading-tight tracking-tight text-foreground", valueClassName)}>{value}</div>
       <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
         {delta !== undefined && Number.isFinite(delta) && (
           <span className={cn("inline-flex items-center gap-0.5 font-medium", deltaGood === undefined ? "text-muted-foreground" : deltaGood ? "text-[color-mix(in_srgb,var(--s-success)_70%,black)]" : "text-[color-mix(in_srgb,var(--s-error)_80%,black)]")}>
@@ -27,14 +27,14 @@ export function StatCard({ label, value, hint, delta, deltaGood, icon, onClick, 
 
 export function Panel({ title, description, actions, children, className, bodyClassName, noPad }: { title?: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode; children: React.ReactNode; className?: string; bodyClassName?: string; noPad?: boolean }) {
   return (
-    <section className={cn("rounded-lg border bg-card shadow-[0_1px_0_rgba(31,36,48,0.03)]", className)}>
+    <section className={cn("rounded-xl border bg-card shadow-[0_1px_2px_rgb(16_24_40/0.04)]", className)}>
       {(title || actions) && (
-        <header className="flex items-start justify-between gap-2 border-b px-3 py-2">
-          <div className="min-w-0"><h2 className="text-sm font-semibold">{title}</h2>{description && <p className="text-xs text-muted-foreground">{description}</p>}</div>
+        <header className="flex items-start justify-between gap-2 border-b px-4 py-3">
+          <div className="min-w-0"><h2 className="text-[13.5px] font-semibold text-foreground">{title}</h2>{description && <p className="text-xs text-muted-foreground">{description}</p>}</div>
           {actions && <div className="flex shrink-0 items-center gap-1.5">{actions}</div>}
         </header>
       )}
-      <div className={cn(!noPad && "p-3", bodyClassName)}>{children}</div>
+      <div className={cn(!noPad && "p-4", bodyClassName)}>{children}</div>
     </section>
   );
 }

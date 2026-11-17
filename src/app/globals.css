@@ -44,6 +44,18 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-sb-bg: var(--sb-bg);
+  --color-sb-fg: var(--sb-fg);
+  --color-sb-muted: var(--sb-muted);
+  --color-sb-label: var(--sb-label);
+  --color-sb-hover: var(--sb-hover);
+  --color-sb-active: var(--sb-active-bg);
+  --color-sb-active-fg: var(--sb-active-fg);
+  --color-sb-active-icon: var(--sb-active-icon);
+  --color-sb-bar: var(--sb-bar);
+  --color-sb-border: var(--sb-border);
+  --color-sb-logo: var(--sb-logo);
+  --color-sb-logo-sub: var(--sb-logo-sub);
   --color-depth: var(--t-depth);
   --color-action: var(--t-action);
   --color-hover: var(--t-hover);
@@ -75,6 +87,10 @@
 
 /* ---------- Product themes: Depth / Primary / Action / Hover / Soft / Tint / Surface ---------- */
 :root,
+[data-theme="modern"] {
+  --t-depth: #35243f; --t-primary: #654477; --t-action: #7a5791; --t-hover: #533665;
+  --t-soft: #c9b4d6; --t-tint: #f1e9f5; --t-surface: #faf7fc;
+}
 [data-theme="aubergine"] {
   --t-depth: #35243f; --t-primary: #654477; --t-action: #84609a; --t-hover: #533665;
   --t-soft: #c1a8d0; --t-tint: #ede3f1; --t-surface: #f8f4fa;
@@ -125,6 +141,40 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: color-mix(in srgb, #ffffff 12%, var(--t-depth));
   --sidebar-ring: var(--t-soft);
+}
+
+/* ---------- Navigation chrome tokens ----------
+   Light chrome (default / EVOQ Modern Light): white sidebar, hairline borders, brand tint for the active item.
+   Dark chrome (legacy themes): Depth-coloured sidebar. Components only read --sb-* so both render from one markup. */
+:root {
+  --sb-bg: #ffffff;
+  --sb-fg: #344054;
+  --sb-muted: #667085;
+  --sb-label: #98a2b3;
+  --sb-hover: #f3f4f7;
+  --sb-active-bg: var(--t-tint);
+  --sb-active-fg: var(--t-depth);
+  --sb-active-icon: var(--t-primary);
+  --sb-bar: var(--t-primary);
+  --sb-border: #e9eaf0;
+  --sb-logo: #1f2430;
+  --sb-logo-sub: #98a2b3;
+  --top-bg: #ffffff;
+  --card-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.04);
+}
+[data-theme="graphite"], [data-theme="copper"], [data-theme="aubergine"], [data-theme="petrol"] {
+  --sb-bg: var(--t-depth);
+  --sb-fg: rgb(255 255 255 / 0.82);
+  --sb-muted: rgb(255 255 255 / 0.6);
+  --sb-label: rgb(255 255 255 / 0.4);
+  --sb-hover: color-mix(in srgb, #ffffff 9%, var(--t-depth));
+  --sb-active-bg: color-mix(in srgb, #ffffff 14%, var(--t-depth));
+  --sb-active-fg: #ffffff;
+  --sb-active-icon: var(--t-soft);
+  --sb-bar: var(--t-action);
+  --sb-border: color-mix(in srgb, #ffffff 12%, var(--t-depth));
+  --sb-logo: #ffffff;
+  --sb-logo-sub: rgb(255 255 255 / 0.5);
 }
 
 @layer base {

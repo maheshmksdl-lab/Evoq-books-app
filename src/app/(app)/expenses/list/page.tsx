@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { PersonCell } from "@/components/shared/user-avatar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Eye, Pencil, Plus, Repeat, Send, Trash2, XCircle } from "lucide-react";
@@ -32,7 +33,7 @@ export default function ExpensesPage() {
   const cols: Column<Row>[] = [
     { id: "n", header: "Expense", accessor: (x) => x.number, cell: (x) => <Link className="font-medium text-primary hover:underline" href={`/expenses/${x.id}`} onClick={(e) => e.stopPropagation()}>{x.number}</Link> }, { id: "d", header: "Date", accessor: (x) => x.date, cell: (x) => formatDate(x.date) },
     { id: "desc", header: "Description", accessor: (x) => x.description, className: "max-w-[260px] truncate" }, { id: "cat", header: "Category", accessor: (x) => x.categoryName, hideBelow: "md" }, { id: "pay", header: "Paid via", accessor: (x) => `${x.paymentName} ${x.paymentMethod}`, cell: (x) => <span className="text-xs text-muted-foreground">{x.paymentName}<br />{x.paymentMethod.toUpperCase()}</span>, hideBelow: "lg" },
-    { id: "by", header: "Submitted by", accessor: (x) => x.submittedBy, hideBelow: "lg" }, { id: "tax", header: "GST", align: "right", accessor: (x) => x.taxAmount, cell: (x) => (x.taxAmount ? f.money(x.taxAmount) : "—"), hideBelow: "lg" },
+    { id: "by", header: "Submitted by", accessor: (x) => x.submittedBy, cell: (x) => <PersonCell name={x.submittedBy} />, hideBelow: "lg" }, { id: "tax", header: "GST", align: "right", accessor: (x) => x.taxAmount, cell: (x) => (x.taxAmount ? f.money(x.taxAmount) : "—"), hideBelow: "lg" },
     { id: "a", header: "Amount", align: "right", accessor: (x) => x.amount, cell: (x) => f.money(x.amount) }, { id: "s", header: "Status", accessor: (x) => x.status, cell: (x) => <span className="flex items-center gap-1"><StatusBadge status={x.status === "paid" ? "paid" : x.status} />{x.recurring && <Repeat className="size-3 text-muted-foreground" aria-label="Recurring" />}</span> },
   ];
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import Link from "next/link";
 import { ArrowUp, Bot, Loader2, MessageSquarePlus, Sparkles, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -58,7 +59,7 @@ function Chat() {
               <div className="mt-4 flex flex-wrap justify-center gap-2">{SUGGESTED_QUESTIONS.slice(0, 4).map((q) => <button key={q} onClick={() => send(q)} className="rounded-full border px-3 py-1 text-xs hover:bg-accent">{q}</button>)}</div></div>)}
           {msgs.map((m) => (
             <div key={m.id} className={cn("flex gap-2", m.role === "user" && "flex-row-reverse")}>
-              <div className={cn("flex size-7 shrink-0 items-center justify-center rounded-full text-white", m.role === "user" ? "bg-primary" : "bg-depth")}>{m.role === "user" ? <User className="size-3.5" /> : <Bot className="size-3.5" />}</div>
+              {m.role === "user" ? <UserAvatar name="Meera Iyer" size={28} /> : <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent text-primary"><Bot className="size-3.5" /></div>}
               <div className={cn("max-w-[86%] rounded-lg px-3 py-2", m.role === "user" ? "bg-primary text-primary-foreground" : "border bg-surface")}>
                 {m.role === "assistant" && <div className="mb-1"><AiBadge>Simulated answer</AiBadge></div>}
                 {m.role === "user" ? <p className="text-[13px]">{m.text}</p> : <Rich text={m.text} />}

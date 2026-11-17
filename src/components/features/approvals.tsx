@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { PersonCell } from "@/components/shared/user-avatar";
+import { ByLine } from "@/components/shared/user-avatar";
 import Link from "next/link";
 import { CheckCircle2, MessageSquare, Pencil, Plus, ShieldAlert, Trash2, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -34,7 +36,7 @@ export function ApprovalsQueue({ docTypes, title }: { docTypes?: ApprovalDocType
   const cur = (data ?? []).find((r) => r.id === sel);
   const cols: Column<ApprovalRequest>[] = [
     { id: "ref", header: "Reference", accessor: (r) => r.docRef, cell: (r) => <span className="font-medium">{r.docRef}</span> }, { id: "type", header: "Type", accessor: (r) => DOC_LABEL[r.docType] }, { id: "title", header: "Description", accessor: (r) => r.title, className: "max-w-[280px] truncate" },
-    { id: "by", header: "Requested by", accessor: (r) => r.requestedBy, hideBelow: "md" }, { id: "at", header: "Submitted", accessor: (r) => r.requestedAt, cell: (r) => formatDate(r.requestedAt), hideBelow: "md" },
+    { id: "by", header: "Requested by", accessor: (r) => r.requestedBy, cell: (r) => <PersonCell name={r.requestedBy} />, hideBelow: "md" }, { id: "at", header: "Submitted", accessor: (r) => r.requestedAt, cell: (r) => formatDate(r.requestedAt), hideBelow: "md" },
     { id: "role", header: "Approver", accessor: (r) => r.approverRole, hideBelow: "lg" }, { id: "amt", header: "Amount", align: "right", accessor: (r) => r.amount, cell: (r) => (r.amount ? f.money(r.amount) : "—") }, { id: "s", header: "Status", accessor: (r) => r.status, cell: (r) => <StatusBadge status={r.status} /> },
   ];
   return (
@@ -47,11 +49,11 @@ export function ApprovalsQueue({ docTypes, title }: { docTypes?: ApprovalDocType
       <DetailDrawer open={!!cur} onOpenChange={(o) => !o && setSel(null)} wide title={cur ? `${DOC_LABEL[cur.docType]} · ${cur.docRef}` : ""} description={cur?.title}
         footer={cur?.status === "pending" && <><Button variant="outline" size="sm" disabled={act.isPending} onClick={() => act.mutate({ id: cur.id, action: "reject", comment })}><XCircle /> Reject</Button><Button size="sm" disabled={act.isPending} onClick={() => act.mutate({ id: cur.id, action: "approve", comment })}><CheckCircle2 /> Approve</Button></>}>
         {cur && <>
-          <dl className="grid grid-cols-2 gap-3"><KV label="Amount">{cur.amount ? f.money(cur.amount) : "—"}</KV><KV label="Status"><StatusBadge status={cur.status} /></KV><KV label="Requested by">{cur.requestedBy}</KV><KV label="Awaiting">{cur.status === "pending" ? cur.approverRole : "—"}</KV></dl>
+          <dl className="grid grid-cols-2 gap-3"><KV label="Amount">{cur.amount ? f.money(cur.amount) : "—"}</KV><KV label="Status"><StatusBadge status={cur.status} /></KV><KV label="Requested by"><PersonCell name={cur.requestedBy} /></KV><KV label="Awaiting">{cur.status === "pending" ? cur.approverRole : "—"}</KV></dl>
           <Button variant="outline" size="sm" asChild><Link href={docHref(cur)}>Open {DOC_LABEL[cur.docType].toLowerCase()}</Link></Button>
           {cur.status === "pending" && !can("approvals", "approve") && <p className="tone-warning flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs"><ShieldAlert className="size-3.5" /> {actingRole?.name} cannot approve. Switch role to simulate an approver.</p>}
           <div><p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Approval history</p>
-            <ol className="space-y-2 border-l pl-3">{cur.history.map((h, i) => <li key={i} className="relative text-xs"><span className="absolute -left-[17px] top-1 size-2 rounded-full bg-action" /><p className="font-medium capitalize">{h.action}</p><p className="text-muted-foreground">{h.by} · {formatDateTime(h.at)}</p>{h.comment && <p className="mt-0.5 rounded bg-muted px-2 py-1">{h.comment}</p>}</li>)}</ol></div>
+            <ol className="space-y-2 border-l pl-3">{cur.history.map((h, i) => <li key={i} className="relative text-xs"><span className="absolute -left-[17px] top-1 size-2 rounded-full bg-action" /><p className="font-medium capitalize">{h.action}</p><ByLine name={h.by} at={h.at} />{h.comment && <p className="mt-0.5 rounded bg-muted px-2 py-1">{h.comment}</p>}</li>)}</ol></div>
           <div className="space-y-2"><Textarea rows={2} placeholder="Add a comment (optional for approve / reject)…" value={comment} onChange={(e) => setComment(e.target.value)} />{comment && <Button size="xs" variant="outline" onClick={() => note.mutate({ id: cur.id, text: comment })}>Post comment only</Button>}</div>
         </>}
       </DetailDrawer>
