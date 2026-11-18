@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="EVOQ Books"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A5791"/><stop offset="1" stop-color="#5A3C6C"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="url(#g1)"/>
+    <path d="M21 13h16l10 10v24a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4V17a4 4 0 0 1 4-4Z" fill="#FFFFFF"/>
+    <path d="M37 13v6.5a3.5 3.5 0 0 0 3.5 3.5H47Z" fill="#DCCCE8"/>
+    <path d="M23.5 31h17M23.5 37.5h17M23.5 44H33" fill="none" stroke="#654477" stroke-width="2.8" stroke-linecap="round"/></svg>

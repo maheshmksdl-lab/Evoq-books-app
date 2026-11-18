@@ -15,13 +15,12 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 export function Logo({ collapsed, tone = "sidebar" }: { collapsed?: boolean; tone?: "sidebar" | "page" }) {
   return (
     <Link href="/dashboard" className="flex items-center gap-2.5 rounded-md outline-offset-2" aria-label="EVOQ Books home">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-white shadow-sm" aria-hidden>
-        <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 4h9a4 4 0 0 1 0 8H5z" /><path d="M5 12h10a4 4 0 0 1 0 8H5z" /></svg>
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary shadow-sm" aria-hidden>
+        <svg viewBox="0 0 64 64" className="size-[26px]" aria-hidden><rect x="16.5" y="11.5" width="31" height="41" rx="6.5" fill="#fff" /><rect x="21.5" y="16.5" width="21" height="10" rx="2.8" fill="var(--t-primary)" /><rect x="35" y="19.7" width="5.5" height="3.6" rx="1.2" fill="#fff" /><g fill="var(--t-primary)" opacity=".9"><rect x="21.5" y="31" width="5.5" height="5" rx="1.6" /><rect x="29.2" y="31" width="5.5" height="5" rx="1.6" /><rect x="36.9" y="31" width="5.5" height="5" rx="1.6" /><rect x="21.5" y="38.5" width="5.5" height="5" rx="1.6" /><rect x="29.2" y="38.5" width="5.5" height="5" rx="1.6" /><rect x="21.5" y="46" width="5.5" height="3.8" rx="1.6" /><rect x="29.2" y="46" width="5.5" height="3.8" rx="1.6" /></g><rect x="36.9" y="38.5" width="5.5" height="11.3" rx="1.6" fill="var(--t-action)" /></svg>
       </span>
       {!collapsed && (
         <span className="leading-none">
-          <span className="block text-[15px] font-semibold tracking-wide" style={tone === "page" ? { color: "var(--n-text)" } : { color: "var(--sb-logo)" }}>EVOQ <span className="font-normal" style={{ color: tone === "page" ? "var(--t-primary)" : "var(--sb-active-icon)" }}>Books</span></span>
-          <span className="mt-0.5 block text-[10px] uppercase tracking-[0.18em]" style={{ color: tone === "page" ? "var(--n-subtle)" : "var(--sb-logo-sub)" }}>Accounting</span>
+          <span className="block text-[20px] font-bold tracking-tight" style={{ color: tone === "page" ? "var(--n-text)" : "var(--sb-logo)" }}>Books</span>
         </span>
       )}
     </Link>

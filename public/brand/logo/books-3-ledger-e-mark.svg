@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="EVOQ Books"><defs><linearGradient id="g9" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A5791"/><stop offset="1" stop-color="#5A3C6C"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="url(#g9)"/>
+    <rect x="15" y="13" width="9" height="38" rx="4.5" fill="#FFFFFF"/>
+    <rect x="15" y="13" width="32" height="9" rx="4.5" fill="#FFFFFF"/>
+    <rect x="15" y="42" width="32" height="9" rx="4.5" fill="#FFFFFF"/>
+    <rect x="15" y="27.5" width="24" height="9" rx="4.5" fill="#DCCCE8"/>
+    <circle cx="47.5" cy="32" r="4.5" fill="#DCCCE8"/></svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="EVOQ Books"><defs><linearGradient id="g17" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A5791"/><stop offset="1" stop-color="#5A3C6C"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="url(#g17)"/>
+    <rect x="16.500" y="11.500" width="31" height="41" rx="6.500" fill="#FFFFFF"/>
+    <rect x="21.500" y="16.500" width="21" height="10" rx="2.800" fill="#654477"/>
+    <rect x="35" y="19.700" width="5.500" height="3.600" rx="1.200" fill="#FFFFFF"/>
+    <g fill="#654477" opacity=".9"><rect x="21.500" y="31" width="5.500" height="5" rx="1.600"/><rect x="29.200" y="31" width="5.500" height="5" rx="1.600"/><rect x="36.900" y="31" width="5.500" height="5" rx="1.600"/><rect x="21.500" y="38.500" width="5.500" height="5" rx="1.600"/><rect x="29.200" y="38.500" width="5.500" height="5" rx="1.600"/><rect x="21.500" y="46" width="5.500" height="3.800" rx="1.600"/><rect x="29.200" y="46" width="5.500" height="3.800" rx="1.600"/></g>
+    <rect x="36.900" y="38.500" width="5.500" height="11.300" rx="1.600" fill="#7A5791"/></svg>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EVOQ Books — logo concepts</title>
+<link rel="icon" href="logo/evoq-books-favicon.svg" type="image/svg+xml">
+<style>
+  :root{--depth:#35243f;--primary:#654477;--action:#7a5791;--soft:#c9b4d6;--tint:#f1e9f5;--surface:#faf7fc;--ink:#1f2430;--muted:#5f6b7a;--line:#e6eaf0}
+  *{box-sizing:border-box} body{margin:0;font:14px/1.5 "DM Sans",system-ui,sans-serif;color:var(--ink);background:#f8fafc}
+  main{max-width:1120px;margin:0 auto;padding:32px 20px 64px} h1{font-size:26px;margin:0 0 4px} h2{font-size:18px;margin:0}
+  .sub{color:var(--muted);margin:0 0 24px} .palette{display:flex;gap:6px;margin:0 0 28px;flex-wrap:wrap}
+  .sw{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px}.sw i{width:18px;height:18px;border-radius:5px;display:block}
+  .concept{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px}
+  .concept.rec{border-color:var(--action);box-shadow:0 0 0 3px rgb(122 87 145/.15)} .badge{display:inline-block;margin-left:8px;background:var(--primary);color:#fff;border-radius:999px;padding:1px 10px;font-size:11px;vertical-align:middle}
+  .why{color:var(--muted);margin:4px 0 16px;max-width:760px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .cell{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:120px;justify-content:center}
+  .cell small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  .dark{background:var(--depth);border-color:var(--depth)} .dark small{color:#c9b4d6}
+  .tintbg{background:var(--tint)} .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .sidebar{background:#fff;width:240px;border:1px solid var(--line);border-radius:10px;padding:12px}
+  .nav{margin-top:10px;display:grid;gap:4px}.nav span{height:26px;border-radius:7px;background:#f3f4f7}.nav span.on{background:var(--tint);border-left:3px solid var(--primary)}
+  .tab{display:flex;gap:10px;align-items:center;background:#dfe3ea;border-radius:10px 10px 0 0;padding:8px 12px;width:230px;font-size:12px}
+  .small img{display:block}
+</style></head>
+<body><main>
+<h1>EVOQ Books — logo concepts</h1>
+<p class="sub">Siblings (Billing, Bookings, Inventory) use a rounded app-tile in the product colour with a simple glyph, next to the product name. Each concept keeps that family language, uses the Books palette, and avoids a “B” so it cannot be confused with Billing's mark. Concept 5 (calculator) is the selected direction.</p>
+<div class="palette">
+  <span class="sw"><i style="background:#35243f"></i>Depth #35243F</span><span class="sw"><i style="background:#654477"></i>Primary #654477</span><span class="sw"><i style="background:#7a5791"></i>Action #7A5791</span><span class="sw"><i style="background:#c9b4d6"></i>Soft #C9B4D6</span><span class="sw"><i style="background:#f1e9f5"></i>Tint #F1E9F5</span>
+</div>
+
+<!-- concept blocks are generated below by script so the sheet stays in sync with the SVG files -->
+<div id="out"></div>
+</main>
+<script>
+const C=[
+ {k:"1-ledger-fold",n:"1 · Ledger Fold",d:"A ruled ledger page with a folded corner. Reads instantly as “records / books”. Friendly and literal; the fold gives a small point of difference."},
+ {k:"2-balance",n:"2 · Balance",d:"Two offset rounded bars: an equals sign that is slightly out of register — debit and credit — with a coin-dot above. Minimal and modern, but a little abstract and close to a generic “=” icon."},
+ {k:"3-ledger-e",n:"3 · Ledger E",d:"The E of EVOQ built from ruled ledger lines. The middle line and trailing coin are lighter, so the same shape also reads as entries on a statement and as a bar chart. It ties Books to the EVOQ family, is original, and survives down to 16 px."},
+ {k:"4-open-book",n:"4 · Open Book",d:"An open book whose left page carries ruled entries and whose right page carries a rising line — books and growth in one original mark. Distinct from a “B” and from the Zoho Books mark, true to the EVOQ tile family, and clear at small sizes."},
+ {k:"5-calculator",n:"5 · Calculator",d:"Selected direction: an accounting calculator — display, key grid and a tall accent “=” key. Instantly reads as accounts and bookkeeping, original in its proportions, and clear at small sizes.",rec:true}
+];
+const out=document.getElementById("out");
+for(const c of C){
+ const f=(s)=>`logo/books-${c.k}-${s}.svg`;
+ out.insertAdjacentHTML("beforeend",`
+ <section class="concept ${c.rec?"rec":""}">
+  <h2>${c.n}${c.rec?'<span class="badge">Recommended</span>':""}</h2><p class="why">${c.d}</p>
+  <div class="grid">
+   <div class="cell"><small>Mark</small><div class="row"><img src="${f("mark")}" width="96" height="96" alt=""><img src="${f("mark")}" width="48" height="48" alt=""><img src="${f("mark")}" width="32" height="32" alt=""><img src="${f("mark")}" width="16" height="16" alt=""></div></div>
+   <div class="cell"><small>Lockup · light</small><img src="${f("lockup")}" height="56" alt="EVOQ Books" style="align-self:flex-start"></div>
+   <div class="cell dark"><small>Lockup · dark (#35243F)</small><img src="${f("lockup-on-dark")}" height="56" alt="EVOQ Books" style="align-self:flex-start"></div>
+   <div class="cell tintbg"><small>Mark on tint · dark variant</small><div class="row"><img src="${f("mark")}" width="56" height="56" alt=""><img src="${f("mark-on-dark")}" width="56" height="56" alt=""></div></div>
+   <div class="cell"><small>Sidebar (white)</small><div class="sidebar"><img src="${f("lockup")}" height="36" alt=""><div class="nav"><span class="on"></span><span></span><span></span></div></div></div>
+   <div class="cell"><small>Browser tab / favicon</small><div class="tab"><img src="${f("mark")}" width="16" height="16" alt="">EVOQ Books</div></div>
+  </div>
+ </section>`);
+}
+</script>
+</body></html>
